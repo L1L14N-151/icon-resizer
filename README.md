@@ -1,5 +1,9 @@
 # 🎨 Icon Resizer
 
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/L1L14N-151/icon-resizer)
+[![Live Demo](https://img.shields.io/badge/demo-live-brightgreen)](https://icon-resizer.vercel.app)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+
 A modern web tool to easily resize your icons for all platforms.
 
 ![Icon Resizer Screenshot](screenshots/main.png)

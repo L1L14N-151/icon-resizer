@@ -1,0 +1,38 @@
+# GitHub Repository Description (160 caractères max)
+
+## Option 1 - Concise et direct :
+🎨 Modern web tool to resize icons for all platforms - Chrome, Firefox, iOS, Android & more. Features dark mode, multi-language support & batch export.
+
+## Option 2 - Focus features :
+Generate perfectly sized icons for any platform in seconds. Supports PNG, SVG, WebP with customizable backgrounds, size selection and history tracking.
+
+## Option 3 - Simple :
+Web-based icon resizer with presets for all major platforms. No installation required - just drag, resize, and download.
+
+## Option 4 - Professionnel :
+Professional icon generation tool for developers. Create platform-specific icon sets with one click. Supports all major formats and custom sizing.
+
+## Option 5 - Emoji rich :
+🚀 Instant icon resizing for Chrome, iOS, Android & more | 🌓 Dark/Light mode | 🌐 FR/EN | 📦 Bulk export | Zero config
+
+---
+
+# GitHub Topics/Tags suggérés :
+icon-resizer
+icon-generator
+web-app
+javascript
+canvas-api
+pwa-icons
+favicon-generator
+image-processing
+developer-tools
+no-framework
+vanilla-js
+responsive-design
+dark-mode
+multilingual
+
+# GitHub About (court) :
+Website: https://icon-resizer.vercel.app
+Topics: icon-resizer, web-app, developer-tools, image-processing
