@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="fr" id="historyPage">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Historique - Icon Resizer</title>
+    <link rel="stylesheet" type="text/css" href="./style.css" />
+    <style>
+      .history-page {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+      .back-button {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--text-secondary);
+        text-decoration: none;
+        margin-bottom: var(--space-lg);
+        transition: var(--transition);
+      }
+      .back-button:hover {
+        color: var(--accent);
+      }
+      .history-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        width: 100%;
+      }
+      .history-page .history-section {
+        margin-top: 0;
+        padding-top: 0;
+        border-top: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app history-page">
+      <header class="app-header">
+        <h1>
+          <svg class="logo" width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <rect x="3" y="3" width="7" height="7" stroke="currentColor" stroke-width="2"/>
+            <rect x="14" y="3" width="7" height="7" stroke="currentColor" stroke-width="2"/>
+            <rect x="3" y="14" width="7" height="7" stroke="currentColor" stroke-width="2"/>
+            <rect x="14" y="14" width="7" height="7" stroke="currentColor" stroke-width="2"/>
+          </svg>
+          Icon Resizer - <span data-i18n="history.title">Historique</span>
+        </h1>
+        <div class="header-actions">
+          <button id="themeToggle" class="theme-toggle" title="Changer de thème">
+            <svg class="theme-icon" data-theme="dark" width="20" height="20" viewBox="0 0 24 24" fill="none">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <svg class="theme-icon hidden" data-theme="light" width="20" height="20" viewBox="0 0 24 24" fill="none">
+              <circle cx="12" cy="12" r="5" stroke="currentColor" stroke-width="2"/>
+              <line x1="12" y1="1" x2="12" y2="3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <line x1="12" y1="21" x2="12" y2="23" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <line x1="1" y1="12" x2="3" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <line x1="21" y1="12" x2="23" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </button>
+          <button id="langToggle" class="lang-toggle" title="Change language">
+            <span class="lang-flag" data-lang="fr">🇫🇷</span>
+            <span class="lang-flag hidden" data-lang="en">🇬🇧</span>
+          </button>
+          <span class="version">v2.0</span>
+        </div>
+      </header>
+
+      <main class="app-main">
+        <div class="history-content">
+          <a href="index.html" class="back-button">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+              <path d="M19 12H5M12 19l-7-7 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span data-i18n="history.back">Retour</span>
+          </a>
+
+          <section class="history-section">
+            <div class="history-header">
+              <h2 data-i18n="history.title">Historique des générations</h2>
+              <button id="clearHistory" type="button" class="btn-text" data-i18n="history.clear">Effacer tout</button>
+            </div>
+            <div id="historyList" class="history-list">
+              <div class="history-empty">Chargement...</div>
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
+
+    <script>
+      const $ = (sel) => document.querySelector(sel);
+      const $$ = (sel) => Array.prototype.slice.call(document.querySelectorAll(sel));
+      
+      // Système de traduction pour history.html
+      const translations = {
+        fr: {
+          "history.title": "Historique des générations",
+          "history.clear": "Effacer tout",
+          "history.empty": "Aucun historique",
+          "history.delete": "Supprimer",
+          "history.back": "Retour",
+          "history.confirmClear": "Êtes-vous sûr de vouloir effacer tout l'historique ?",
+          "history.confirmDelete": "Supprimer cet élément de l'historique ?",
+          "history.loading": "Chargement..."
+        },
+        en: {
+          "history.title": "Generation history",
+          "history.clear": "Clear all",
+          "history.empty": "No history",
+          "history.delete": "Delete",
+          "history.back": "Back",
+          "history.confirmClear": "Are you sure you want to clear all history?",
+          "history.confirmDelete": "Delete this item from history?",
+          "history.loading": "Loading..."
+        }
+      };
+      
+      let currentLanguage = localStorage.getItem('iconResizerLanguage') || 'fr';
+      
+      function t(key) {
+        return translations[currentLanguage][key] || translations['fr'][key] || key;
+      }
+      
+      function updateUILanguage() {
+        // Mettre à jour les éléments avec data-i18n
+        $$('[data-i18n]').forEach(el => {
+          const key = el.getAttribute('data-i18n');
+          el.textContent = t(key);
+        });
+        
+        // Mettre à jour le bouton de langue
+        const langToggle = $('#langToggle');
+        if (langToggle) {
+          const flags = langToggle.querySelectorAll('.lang-flag');
+          flags.forEach(flag => {
+            if (flag.dataset.lang === currentLanguage) {
+              flag.classList.remove('hidden');
+            } else {
+              flag.classList.add('hidden');
+            }
+          });
+        }
+        
+        // Mettre à jour la langue du document
+        document.documentElement.lang = currentLanguage;
+      }
+      
+      // Appliquer la langue au chargement
+      updateUILanguage();
+      
+      // Système de thème
+      function initTheme() {
+        const savedTheme = localStorage.getItem('iconResizerTheme');
+        const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const theme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
+        setTheme(theme);
+      }
+      
+      function setTheme(theme) {
+        document.documentElement.setAttribute('data-theme', theme);
+        localStorage.setItem('iconResizerTheme', theme);
+        
+        // Mettre à jour les icônes
+        const themeToggle = $('#themeToggle');
+        if (themeToggle) {
+          const icons = themeToggle.querySelectorAll('.theme-icon');
+          icons.forEach(icon => {
+            if (icon.dataset.theme === theme) {
+              icon.classList.add('hidden');
+            } else {
+              icon.classList.remove('hidden');
+            }
+          });
+        }
+      }
+      
+      function toggleTheme() {
+        const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        setTheme(newTheme);
+      }
+      
+      function setLanguage(lang) {
+        currentLanguage = lang;
+        localStorage.setItem('iconResizerLanguage', lang);
+        updateUILanguage();
+      }
+      
+      // Initialiser thème et langue
+      initTheme();
+      
+      // Gestionnaires d'événements
+      const themeToggle = $('#themeToggle');
+      if (themeToggle) {
+        themeToggle.addEventListener('click', toggleTheme);
+      }
+      
+      const langToggle = $('#langToggle');
+      if (langToggle) {
+        langToggle.addEventListener('click', () => {
+          const newLang = currentLanguage === 'fr' ? 'en' : 'fr';
+          setLanguage(newLang);
+        });
+      }
+      
+      // Charger l'historique depuis localStorage
+      let generationHistory = [];
+      
+      function loadHistory() {
+        const saved = localStorage.getItem('iconResizerHistory');
+        if (saved) {
+          try {
+            generationHistory = JSON.parse(saved);
+            renderHistory();
+          } catch (e) {
+            console.error('Erreur lors du chargement de l\'historique:', e);
+          }
+        } else {
+          renderHistory();
+        }
+      }
+      
+      function renderHistory() {
+        const historyList = $("#historyList");
+        if (!historyList) return;
+        
+        if (generationHistory.length === 0) {
+          historyList.innerHTML = `<div class="history-empty">${t('history.empty')}</div>`;
+          return;
+        }
+        
+        historyList.innerHTML = '';
+        
+        generationHistory.forEach((item, index) => {
+          const date = new Date(item.date);
+          const formattedDate = date.toLocaleDateString('fr-FR') + ' ' + 
+                               date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+          const sizesText = item.sizes.length + ' taille' + (item.sizes.length > 1 ? 's' : '');
+          
+          const historyItemEl = document.createElement('div');
+          historyItemEl.className = 'history-item';
+          historyItemEl.innerHTML = `
+            <div class="history-item-thumb">
+              ${item.thumbnail ? `<img src="${item.thumbnail}" alt="${item.name}">` : ''}
+            </div>
+            <div class="history-item-info">
+              <div class="history-item-name">${item.name}</div>
+              <div class="history-item-meta">${formattedDate} • ${sizesText} • ${item.preset}</div>
+            </div>
+            <div class="history-item-actions">
+              <button class="btn btn-secondary btn-sm" onclick="deleteItem(${index})">${t('history.delete')}</button>
+            </div>
+          `;
+          
+          historyList.appendChild(historyItemEl);
+        });
+      }
+      
+      function deleteItem(index) {
+        if (confirm(t('history.confirmDelete'))) {
+          generationHistory.splice(index, 1);
+          localStorage.setItem('iconResizerHistory', JSON.stringify(generationHistory));
+          renderHistory();
+        }
+      }
+      
+      const clearHistoryBtn = $("#clearHistory");
+      if (clearHistoryBtn) {
+        clearHistoryBtn.addEventListener('click', () => {
+          if (confirm(t('history.confirmClear'))) {
+            generationHistory = [];
+            localStorage.setItem('iconResizerHistory', JSON.stringify([]));
+            renderHistory();
+          }
+        });
+      }
+      
+      // Charger l'historique au démarrage
+      loadHistory();
+    </script>
+  </body>
+</html>
