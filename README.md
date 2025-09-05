@@ -14,7 +14,6 @@ A modern web tool to easily resize your icons for all platforms.
 - 💾 **History**: Keep track of all your generations
 - 🎨 **SVG support**: Preserves vector quality
 - 🖼️ **Customizable backgrounds**: Transparent or solid color
-- 📂 **Custom templates**: Create and save your own configurations
 
 ## 🚀 Usage
 
