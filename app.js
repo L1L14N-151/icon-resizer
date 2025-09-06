@@ -531,12 +531,20 @@ updatePresetEditor();
 // no manual cropper toggle
 
 // Toggle background color controls
-$$('input[name="bg"]').forEach(function(radio){
-  radio.addEventListener('change', function(){
-    const isColor = getBackground().type === 'color';
+$$('.toggle-btn[data-bg]').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    // Retirer 'active' de tous les boutons
+    $$('.toggle-btn[data-bg]').forEach(b => b.classList.remove('active'));
+    // Ajouter 'active' au bouton cliqué
+    this.classList.add('active');
+    
+    const bgType = this.getAttribute('data-bg');
     if (bgControls) {
-      if (isColor) bgControls.classList.remove('hidden');
-      else bgControls.classList.add('hidden');
+      if (bgType === 'color') {
+        bgControls.classList.remove('hidden');
+      } else {
+        bgControls.classList.add('hidden');
+      }
     }
   });
 });
@@ -1109,14 +1117,14 @@ function rgbaFromHex(hex, alpha) {
 function getSelectedFit() { return 'contain'; }
 
 function getBackground() {
-  const radios = $$('input[name="bg"]');
-  var val = 'transparent';
-  for (var i = 0; i < radios.length; i++) { if (radios[i].checked) val = radios[i].value; }
+  // Chercher le bouton actif (avec la classe 'active')
+  const activeBtn = document.querySelector('.toggle-btn.active[data-bg]');
+  var val = activeBtn ? activeBtn.getAttribute('data-bg') : 'transparent';
+  
   if (val === 'color') {
-    var color = (bgColorInput && bgColorInput.value) || '#000000';
-    var alpha = (bgAlphaInput && parseInt(bgAlphaInput.value, 10) / 100);
-    if (!isFinite(alpha)) alpha = 1;
-    if (alpha < 0) alpha = 0; if (alpha > 1) alpha = 1;
+    var color = (bgColorInput && bgColorInput.value) || '#ffffff';
+    // Comme il n'y a pas d'input alpha dans le HTML, on utilise une valeur par défaut de 1 (opaque)
+    var alpha = 1;
     return { type: 'color', color: color, alpha: alpha };
   }
   return { type: 'transparent' };
