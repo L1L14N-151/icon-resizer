@@ -917,13 +917,10 @@ function drawFitted(ctx, src, w, h, mode = "contain", bg) {
   const sAspect = sw / sh;
   const dAspect = w / h;
   let dw = w, dh = h, dx = 0, dy = 0;
-  // Fill background if requested (else keep transparency)
-  if (bg && bg.type === 'color') {
-    ctx.fillStyle = rgbaFromHex(bg.color, bg.alpha);
-    ctx.fillRect(0, 0, w, h);
-  } else {
-    ctx.clearRect(0, 0, w, h);
-  }
+  
+  // Le fond est maintenant appliqué AVANT l'appel à drawFitted
+  // Cette fonction se concentre uniquement sur le dessin de l'image
+  
   if (mode === "contain") {
     if (sAspect > dAspect) {
       dw = w; dh = Math.round(w / sAspect); dy = Math.floor((h - dh) / 2);
