@@ -170,6 +170,8 @@ body {
 }
 
 .lang-flag img {
+  height: 16px;
+  width: auto;
   border-radius: 2px;
 }
 
