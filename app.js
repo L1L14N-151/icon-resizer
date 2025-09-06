@@ -686,7 +686,15 @@ async function onGenerate() {
     const canvas = document.createElement("canvas");
     canvas.width = canvas.height = previewSize;
     const ctx = canvas.getContext("2d");
-    ctx.clearRect(0, 0, previewSize, previewSize);
+    
+    // Appliquer le fond AVANT de dessiner l'image pour l'aperçu
+    if (bg && bg.type === 'color') {
+      ctx.fillStyle = rgbaFromHex(bg.color, bg.alpha);
+      ctx.fillRect(0, 0, previewSize, previewSize);
+    } else {
+      ctx.clearRect(0, 0, previewSize, previewSize);
+    }
+    
     drawFitted(ctx, imageBitmap, previewSize, previewSize, mode, bg);
 
     const card = document.createElement("div");
@@ -752,9 +760,17 @@ async function onSaveFolder() {
     const canvas = document.createElement("canvas");
     canvas.width = canvas.height = size;
     const ctx = canvas.getContext("2d");
-    ctx.clearRect(0, 0, size, size);
     const mode = getSelectedFit();
     const bg = getBackground();
+    
+    // Appliquer le fond AVANT de dessiner l'image
+    if (bg && bg.type === 'color') {
+      ctx.fillStyle = rgbaFromHex(bg.color, bg.alpha);
+      ctx.fillRect(0, 0, size, size);
+    } else {
+      ctx.clearRect(0, 0, size, size);
+    }
+    
     drawFitted(ctx, imageBitmap, size, size, mode, bg);
     
     // PNG - toujours généré
@@ -777,12 +793,21 @@ async function onSaveFolder() {
   // Créer un seul favicon.ico multi-tailles (16, 32, 48, 64px)
   const faviconSizes = [16, 32, 48, 64];
   const faviconCanvases = [];
+  const bg = getBackground();
   for (const size of faviconSizes) {
     const c = document.createElement("canvas");
     c.width = c.height = size;
     const ctx = c.getContext("2d");
-    ctx.clearRect(0, 0, size, size);
-    drawFitted(ctx, imageBitmap, size, size, getSelectedFit(), getBackground());
+    
+    // Appliquer le fond AVANT de dessiner l'image
+    if (bg && bg.type === 'color') {
+      ctx.fillStyle = rgbaFromHex(bg.color, bg.alpha);
+      ctx.fillRect(0, 0, size, size);
+    } else {
+      ctx.clearRect(0, 0, size, size);
+    }
+    
+    drawFitted(ctx, imageBitmap, size, size, getSelectedFit(), bg);
     faviconCanvases.push(c);
   }
   const fileHandle = await handle.getFileHandle('favicon.ico', { create: true });
@@ -1151,30 +1176,38 @@ async function onDownloadZip() {
     const c = document.createElement("canvas");
     c.width = c.height = it.size;
     const ctx = c.getContext("2d");
-    ctx.clearRect(0, 0, it.size, it.size);
+    
+    // Appliquer le fond AVANT de dessiner l'image
+    if (bg && bg.type === 'color') {
+      ctx.fillStyle = rgbaFromHex(bg.color, bg.alpha);
+      ctx.fillRect(0, 0, it.size, it.size);
+    } else {
+      ctx.clearRect(0, 0, it.size, it.size);
+    }
+    
     drawFitted(ctx, imageBitmap, it.size, it.size, mode, bg);
     
     const baseName = (it.name || nameFor(preset.name, it.size)).replace(/\.png$/, '');
     const baseFolder = currentPreset === "macos" ? "icon.iconset/" : "";
     
-    // PNG - si sélectionné
+    // PNG - si sélectionné (dans dossier PNG/)
     if (includePNG) {
       let blob = await canvasToBlob(c, 'png');
       let bytes = new Uint8Array(await blob.arrayBuffer());
-      files.push({ name: baseFolder + baseName + '.png', data: bytes });
+      files.push({ name: (baseFolder || "PNG/") + baseName + '.png', data: bytes });
     }
     
-    // WebP - si sélectionné
+    // WebP - si sélectionné (dans dossier WebP/)
     if (includeWebP) {
       let blob = await canvasToBlob(c, 'webp');
       let bytes = new Uint8Array(await blob.arrayBuffer());
-      files.push({ name: baseFolder + baseName + '.webp', data: bytes });
+      files.push({ name: (baseFolder || "WebP/") + baseName + '.webp', data: bytes });
     }
     
     if (i % 2 === 0) await new Promise(requestAnimationFrame);
   }
   
-  // Ajouter favicon.ico si sélectionné
+  // Ajouter favicon.ico si sélectionné (dans dossier ICO/)
   if (includeICO) {
     const faviconSizes = [16, 32, 48, 64];
     const faviconCanvases = [];
@@ -1182,19 +1215,27 @@ async function onDownloadZip() {
       const c = document.createElement("canvas");
       c.width = c.height = size;
       const ctx = c.getContext("2d");
-      ctx.clearRect(0, 0, size, size);
+      
+      // Appliquer le fond AVANT de dessiner l'image
+      if (bg && bg.type === 'color') {
+        ctx.fillStyle = rgbaFromHex(bg.color, bg.alpha);
+        ctx.fillRect(0, 0, size, size);
+      } else {
+        ctx.clearRect(0, 0, size, size);
+      }
+      
       drawFitted(ctx, imageBitmap, size, size, mode, bg);
       faviconCanvases.push(c);
     }
     const faviconBlob = createICO(faviconCanvases);
     const faviconBytes = new Uint8Array(await faviconBlob.arrayBuffer());
-    files.push({ name: "favicon.ico", data: faviconBytes });
+    files.push({ name: "ICO/favicon.ico", data: faviconBytes });
   }
   
-  // Ajouter le SVG original si sélectionné et disponible
+  // Ajouter le SVG original si sélectionné et disponible (dans dossier SVG/)
   if (includeSVG && originalSVGContent && isSVGFile) {
     const svgBytes = new TextEncoder().encode(originalSVGContent);
-    files.push({ name: originalName + ".svg", data: svgBytes });
+    files.push({ name: "SVG/" + originalName + ".svg", data: svgBytes });
   }
   
   if (files.length === 0) {
