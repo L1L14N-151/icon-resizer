@@ -164,7 +164,14 @@ body {
 }
 
 .lang-flag {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lang-flag svg {
+  border-radius: 2px;
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.1);
 }
 
 .lang-flag.hidden {
