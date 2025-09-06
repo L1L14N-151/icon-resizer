@@ -6,7 +6,7 @@
 
 A modern web tool to easily resize your icons for all platforms.
 
-![Icon Resizer Screenshot](screenshots/main.png)
+![Icon Resizer Screenshot](https://raw.githubusercontent.com/L1L14N-151/icon-resizer/main/screenshots/main.png)
 
 ## ✨ Features
 
@@ -31,19 +31,19 @@ A modern web tool to easily resize your icons for all platforms.
 ## 📸 Screenshots
 
 ### Main interface
-![Main interface](screenshots/main.png)
+![Main interface](https://raw.githubusercontent.com/L1L14N-151/icon-resizer/main/screenshots/main.png)
 
 ### Light mode
-![Light mode](screenshots/light-mode.png)
+![Light mode](https://raw.githubusercontent.com/L1L14N-151/icon-resizer/main/screenshots/light-mode.png)
 
 ### Size selection
-![Size selection](screenshots/sizes-selection.png)
+![Size selection](https://raw.githubusercontent.com/L1L14N-151/icon-resizer/main/screenshots/sizes-selection.png)
 
 ### Generated result
-![Result](screenshots/result.png)
+![Result](https://raw.githubusercontent.com/L1L14N-151/icon-resizer/main/screenshots/result.png)
 
 ### History
-![History](screenshots/history.png)
+![History](https://raw.githubusercontent.com/L1L14N-151/icon-resizer/main/screenshots/history.png)
 
 ## 🛠️ Technologies
 
