@@ -804,11 +804,9 @@ async function onSaveFolder() {
     explicit.map(item => item.size) : 
     (preset.sizes || []);
   
-  // Filtrer pour garder seulement les tailles <= 256px (limite pratique pour ICO)
-  const icoSizes = allSizes.filter(size => size <= 256);
-  
-  // Si aucune taille ou toutes trop grandes, utiliser les tailles par défaut
-  const faviconSizes = icoSizes.length > 0 ? icoSizes : [16, 32, 48, 64, 128, 256];
+  // Utiliser TOUTES les tailles du preset pour le favicon.ico
+  // Pas de limite de taille - inclure même 1024px si présent
+  const faviconSizes = allSizes.length > 0 ? allSizes : [16, 32, 48, 64, 128, 256, 512, 1024];
   
   const faviconCanvases = [];
   const bg = getBackground();
@@ -1229,11 +1227,9 @@ async function onDownloadZip() {
       explicit.map(item => item.size) : 
       (preset.sizes || []);
     
-    // Filtrer pour garder seulement les tailles <= 256px (limite pratique pour ICO)
-    const icoSizes = faviconSizes.filter(size => size <= 256);
-    
-    // Si aucune taille ou toutes trop grandes, utiliser les tailles par défaut
-    const finalSizes = icoSizes.length > 0 ? icoSizes : [16, 32, 48, 64, 128, 256];
+    // Utiliser TOUTES les tailles du preset sans limite
+    // Inclure même les grandes tailles comme 1024px
+    const finalSizes = faviconSizes.length > 0 ? faviconSizes : [16, 32, 48, 64, 128, 256, 512, 1024];
     
     const faviconCanvases = [];
     for (const size of finalSizes) {
