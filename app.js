@@ -798,8 +798,19 @@ async function onSaveFolder() {
     if (i % 2 === 0) await new Promise(requestAnimationFrame);
   }
   
-  // Créer un seul favicon.ico multi-tailles (16, 32, 48, 64px)
-  const faviconSizes = [16, 32, 48, 64];
+  // Créer un seul favicon.ico multi-tailles avec TOUTES les tailles du preset
+  const preset = getCurrentPreset();
+  const explicit = preset.entries || null;
+  const allSizes = explicit ? 
+    explicit.map(item => item.size) : 
+    (preset.sizes || []);
+  
+  // Filtrer pour garder seulement les tailles <= 256px (limite pratique pour ICO)
+  const icoSizes = allSizes.filter(size => size <= 256);
+  
+  // Si aucune taille ou toutes trop grandes, utiliser les tailles par défaut
+  const faviconSizes = icoSizes.length > 0 ? icoSizes : [16, 32, 48, 64, 128, 256];
+  
   const faviconCanvases = [];
   const bg = getBackground();
   for (const size of faviconSizes) {
@@ -1214,9 +1225,19 @@ async function onDownloadZip() {
   
   // Ajouter favicon.ico si sélectionné (dans dossier ICO/)
   if (includeICO) {
-    const faviconSizes = [16, 32, 48, 64];
+    // Utiliser TOUTES les tailles du preset actuel pour le favicon.ico
+    const faviconSizes = explicit ? 
+      explicit.map(item => item.size) : 
+      (preset.sizes || []);
+    
+    // Filtrer pour garder seulement les tailles <= 256px (limite pratique pour ICO)
+    const icoSizes = faviconSizes.filter(size => size <= 256);
+    
+    // Si aucune taille ou toutes trop grandes, utiliser les tailles par défaut
+    const finalSizes = icoSizes.length > 0 ? icoSizes : [16, 32, 48, 64, 128, 256];
+    
     const faviconCanvases = [];
-    for (const size of faviconSizes) {
+    for (const size of finalSizes) {
       const c = document.createElement("canvas");
       c.width = c.height = size;
       const ctx = c.getContext("2d");
