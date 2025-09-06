@@ -799,8 +799,7 @@ async function onSaveFolder() {
   }
   
   // Créer un seul favicon.ico multi-tailles avec TOUTES les tailles du preset
-  const preset = getCurrentPreset();
-  const explicit = preset.entries || null;
+  // preset et explicit sont déjà déclarés plus haut
   const allSizes = explicit ? 
     explicit.map(item => item.size) : 
     (preset.sizes || []);
