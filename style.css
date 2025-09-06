@@ -169,9 +169,8 @@ body {
   justify-content: center;
 }
 
-.lang-flag svg {
+.lang-flag img {
   border-radius: 2px;
-  box-shadow: 0 0 0 1px rgba(0,0,0,0.1);
 }
 
 .lang-flag.hidden {
